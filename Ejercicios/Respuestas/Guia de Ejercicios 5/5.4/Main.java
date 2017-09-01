@@ -1,15 +1,18 @@
-package com.codoacodo;
+package com.netbeans;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
-        String [] uno = {"Un", "caballo", "corre", "en", "la", "pradera"};
-        String [] dos = {"Un", "ocelote", "se", "comio", "al", "caballo",
-            "que", "corre"};
-        String [] tres = {"El", "ocelote", "es", "gran", "animal"};
         
+        List<String> uno = new ArrayList<>(Arrays.asList("xyz", "abc"));
+        List<String> dos = new ArrayList<>(Arrays.asList("xyz", "cba"));
+
         ArrayFinder find = new ArrayFinder();
-        find.compare(uno, dos, tres);
+        find.compare(uno, dos);
     }
     
 }

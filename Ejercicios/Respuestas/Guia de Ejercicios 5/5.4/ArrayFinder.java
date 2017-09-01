@@ -1,13 +1,12 @@
-package com.codoacodo;
+package com.netbeans;
 
-import java.util.ArrayList;
+import java.util.List;
 
 class ArrayFinder {
     
-    ArrayList<String> iguales = new ArrayList<String>();
-    
-    public void compare(ArrayList<String> array, ArrayList<String> array2){
-        for (int i = 0; i < array.size(); i++){
+    public void compare(List<String> array, List<String> array2){
+        int big = (array.size() > array2.size()) ? array.size() : array2.size();
+        for (int i = 0; i < big; i++){
             if (array2.contains(array.get(i))){
                 System.out.printf("Match found at: %s\n",
                         array.get(i));
