@@ -26,13 +26,38 @@ public class Database {
     }
     
     public void setup(){
-        System.out.println("Current Database Status");
-        selectClients();
-        loadNewUser();
+        //Menu
+        
+        System.out.print("1. Create new entry\n2. Manage Passwords\n3. Display"
+                + " Clients\n4. Delete Client\n-> ");
+        int option = input.nextInt();
+        
+        do {
+            switch (option){
+                case 1:
+                    loadNewUser();
+                    break;
+                case 2:
+                    manageUserPassword();
+                    break;
+                case 3:
+                    selectClients();
+                    break;
+                case 4:
+                    deleteClient();
+                    break;
+                default:
+                    System.out.println("Error Selection");
+                    break;
+            }
+        } while (option > 4 || option < 1);
+        
         selectClients();
     }
 
     private void selectClients(){
+        
+        System.out.println("====================================================");
         
         try {
             String query = "SELECT * FROM clients";
@@ -61,6 +86,9 @@ public class Database {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
         }
+        
+        System.out.println("====================================================");
+        setup();
     }
     
     private void loadNewUser() {
@@ -78,10 +106,11 @@ public class Database {
         password = input.next();
         
         /*
-        Check if password is repeated, add each password into an array
+        Check if password is repeated
         */
         
         insertClient(firstname, lastname, country, password);
+        setup();
     }
     
     private boolean insertClient(String firstname, String lastname, String country,
@@ -104,5 +133,27 @@ public class Database {
         }
             
         return false;
+    }
+
+    private void manageUserPassword() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void deleteClient() {
+
+        System.out.print("Input client ID to delete: ");
+        int delete = input.nextInt();
+        
+        try {
+            
+            String query = "DELETE FROM clients WHERE id=" + delete + ";";
+            PreparedStatement deletion = connect.prepareStatement(query);
+            deletion.execute();
+            
+        } catch (Exception e) {
+            
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
     }
 }
