@@ -111,7 +111,7 @@ public class Window extends javax.swing.JFrame {
         int antiguedad = new Integer(inputAntiguedad.getText());
         
         Empleado e = new Empleado(horas, antiguedad);
-        output.setText(e.sueldoBruto() + "$");
+        output.setText(e.getSueldo()+ "$");
     }                                             
 
     /**
