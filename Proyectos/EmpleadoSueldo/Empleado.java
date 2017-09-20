@@ -14,7 +14,6 @@ public class Empleado {
     }
     
     private double retencion (double sueldo) {
-
         if (sueldo <= 18000){
             return sueldo * 0.80;
         } else {
@@ -23,33 +22,25 @@ public class Empleado {
     }
     
     private double calcAntiguedad () {
-        double quinq = 0, anos = this.antiguedad, meses = 0;
-        quinq = (((int) anos / 5) * 800);
-        meses = (((anos / 5) % 1) * 10);
-        
-        //System.out.println("MESES: " + (int) meses);
-        return quinq;
+        int anos = this.antiguedad / 5;
+        int resto = this.antiguedad % 5;
+        return ((anos * 800) + (resto * 300));
     }
     
-    public double sueldoBruto() {
-        double sueldo = 0;
-        int anosAntiguedad = this.antiguedad * 800;
-        int horasExtras = JORNADA_BASICA - this.horasTrabajadas;
-        
+    public double sueldoNeto(){
+        double sueldo;
         if (this.horasTrabajadas <= JORNADA_BASICA){
-            //Jornada Basica
             sueldo = (this.horasTrabajadas * 120);
-            sueldo += anosAntiguedad;
         } else {
-            //Horas extras
-            sueldo = ((JORNADA_BASICA * 120) + (horasExtras * 150));
-            sueldo += anosAntiguedad;
+            int horasExtras = this.horasTrabajadas - JORNADA_BASICA;
+            sueldo = (JORNADA_BASICA * 120) + (horasExtras * 150);
         }
-        
-        sueldo = retencion(sueldo);
-        
-        System.out.println("Antiguedad\n" + calcAntiguedad());
-        
-        return sueldo + calcAntiguedad();
+        return sueldo;
+    }
+    
+    public double getSueldo(){
+        double sueldo = sueldoNeto();
+        sueldo += calcAntiguedad();
+        return retencion(sueldo);
     }
 }
