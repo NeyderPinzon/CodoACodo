@@ -1,0 +1,255 @@
+package com.codoacodo;
+
+import java.util.ArrayList;
+
+public class Banco {
+    
+    ArrayList<Persona> accounts = new ArrayList<>();
+    
+    public Banco () {
+        try {
+            Database database = new Database();
+            System.out.println("Current Table Status: ");
+            database.selectClients();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        
+    }
+    
+    public void mostrarTabla(){
+        try {
+            Database database = new Database();
+            database.selectClients();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    public void agregarCuenta (Persona p){
+        try {
+            Database database = new Database();
+            System.out.println("Current Table Status: ");
+            database.dbAddCustomer(p.getFirstName(), p.getLastName(), p.getBalancePesos(),
+                    p.getBalanceDolar(), p.getPassword());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        //this.accounts.add(p);
+    }
+    
+    public void credit (Persona p, double amount, int account){
+        switch (account) {
+            case 0:
+                p.setBalance((p.getBalancePesos() + amount), 0);
+                break;
+            case 1:
+                p.setBalance((p.getBalanceDolar() + amount), 1);
+                break;
+            default:
+                p.setBalance((p.getBalancePesos() + amount), 0);
+                break;
+        }
+    }
+    
+    public void debit (Persona p, double amount, int account) {
+        switch (account) {
+            case 0:
+                double currentBalance = p.getBalancePesos();
+                if (amount < currentBalance) {
+                    p.setBalance((p.getBalancePesos() - amount), 0);
+                } else {
+                    try {
+                        throw new BalanceAmmountExcedeed("Excedded");
+                    } catch (BalanceAmmountExcedeed ex) {
+                        System.out.println(ex.getMessage());
+                    }       
+                }
+                break;
+            case 1:
+                
+            default:
+                p.setBalance((p.getBalancePesos() + amount), 0);
+                break;
+        }
+    }
+    
+    public String getCurrentPassword(Persona p){
+        
+        String [] passwords = p.getPassword();
+        String lastPassword = "";
+        
+        for (int i = 0; i < passwords.length; i++){
+            if (passwords[i] != null){
+                lastPassword = passwords[i];
+            } else {
+                continue;
+            }
+        }
+        
+        return lastPassword;
+    }
+    
+    private boolean validatePassword(String password){
+        
+        boolean valid = false;
+        
+        if (password.length() >= 5){
+            valid = true;
+        }
+        
+        return valid;
+    }
+    
+    /*
+    public void setNewPassword(Persona p, String newPassword){
+        
+        String [] passwords = p.getPassword();
+        boolean notEquals = true;
+        
+        if (validatePassword(newPassword)){
+            
+            for (int u = 0; u < passwords.length; u++){
+                if (passwords[u] != null && passwords[u].equals(newPassword)){
+                    notEquals = false;
+                }
+            }
+        
+            if (notEquals) {
+            
+                for (int i = 0; i < passwords.length; i++){
+                    if (passwords[i] == null){
+                        passwords[i] = newPassword;
+                        break;
+                    }
+                }
+            
+            } else {
+                System.out.println("The new password already exists");
+            }
+        } else {
+            System.out.println("Password isnt valid!");
+        }
+    }
+    */
+}
+
+-_--_
+
+package com.codoacodo;
+
+import java.sql.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import javax.naming.*;
+import java.util.*;
+
+public class Database {
+
+    private Connection connect;
+    private Scanner input = new Scanner(System.in);
+    
+    private final String DATABASE = "bank";
+    private final String USERNAME = "admin";
+    private final String PASSWORD = "admin";
+    private final String LOCATION = "jdbc:mysql://localhost/";
+    
+    private final String MAIN_TABLE = "customers";
+    
+    DecimalFormat df = new DecimalFormat("#0.00");
+    NumberFormat nf = NumberFormat.getNumberInstance(Locale.GERMAN);
+            
+    public Database()
+            throws OperationNotSupportedException {
+        connect = createConnection(LOCATION, DATABASE, USERNAME, PASSWORD);
+    }
+
+    private Connection createConnection(String url, String base, String user, String pass) 
+        throws OperationNotSupportedException {
+        
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            return DriverManager.getConnection(url + base, user, pass);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        throw new OperationNotSupportedException("Error de Conexion con Base de Datos");
+    }
+    
+    public void selectClients(){
+        
+        System.out.println("---------------------------------------------------------");
+        
+        try {
+            String query = "SELECT * FROM " + MAIN_TABLE;
+            Statement st = connect.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            
+            System.out.format("%s%10s%10sAR$%s10US$%10s%10s\n", 
+                    "First Name", "Last Name", "ACC", "ACC", "ID", "KEY");
+             System.out.println("---------------------------------------------------------");
+            
+            while (rs.next()) {
+          
+                String firstName = rs.getString("first_name");
+                String lastName = rs.getString("last_name");
+                double accPesos = rs.getDouble("acc_pesos");
+                double accDolar = rs.getDouble("acc_dolar");
+                String currentP = rs.getString("current_p");
+                
+                System.out.format("%s%20s%10.2fAR$%10.2fUS$%10d%10s\n",
+                        firstName, lastName, accPesos, accDolar, currentP);
+            }
+            
+        } catch (Exception e) {
+            
+            System.err.println("Cannot connect to DB BANK-");
+            System.err.println(e.getMessage());
+        }
+        
+        System.out.println("====================================================");
+    }
+    
+    public boolean dbAddCustomer(String firstName, String lastName, double balancePesos,
+            double balanceDolar, String password) {
+        
+        try {
+                StringBuilder query = new StringBuilder();
+                query.append("INSERT INTO " + MAIN_TABLE + " ("
+                        + "first_name, last_name, acc_pesos, acc_dolar, "
+                        + "current_p) VALUES(\'" + firstName + "\', " + lastName + 
+                        "\'," + (int) balancePesos + "," + (int) balanceDolar +
+                        ", \'" + password + "');");
+            this.connect.createStatement().execute(query.toString());
+            
+            return true;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+            
+        return false;
+    }
+
+    private void manageUserPassword() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void deleteClient() {
+
+        System.out.print("Input client ID to delete: ");
+        int delete = input.nextInt();
+        
+        try {
+            
+            String query = "DELETE FROM clients WHERE id=" + delete + ";";
+            PreparedStatement deletion = connect.prepareStatement(query);
+            deletion.execute();
+            
+        } catch (Exception e) {
+            
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+    }
+}
