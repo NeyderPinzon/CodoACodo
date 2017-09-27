@@ -1,6 +1,8 @@
 package com.codoacodo;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Banco {
     
@@ -68,10 +70,24 @@ public class Banco {
     
     private boolean validatePassword(String password){
         
-        boolean valid = false;
+        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+        Matcher matchr = p.matcher(password);
+        boolean valid = false, match = matchr.find();
         
+         
         if (password.length() >= 5){
             valid = true;
+        } else {
+            System.out.println("Password must be 5 characters or more.");
+            valid = false;
+        }
+            
+        if (match) {
+            valid =  true;
+        } else {
+            System.out.println("Password must have at least 1 special character\n"
+                    + "($#&)");
+            valid = false;
         }
         
         return valid;
