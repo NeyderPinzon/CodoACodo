@@ -5,6 +5,7 @@ class Persona {
     private String firstName;
     private double [] account = new double [2];
     private String [] passwords = new String [5];
+    private int id;
     
     public Persona (String firstName, double pesos, double dolar, 
             String password) {
@@ -53,4 +54,11 @@ class Persona {
         return this.passwords;
     }
     
+    public String getKey(){
+        return this.passwords[0].toString();
+    }
+
+    public int getId() {
+        return this.id;
+    }
 }
