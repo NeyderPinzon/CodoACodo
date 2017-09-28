@@ -1,28 +1,28 @@
 package com.codoacodo;
 
+import java.util.ArrayList;
+import javax.naming.OperationNotSupportedException;
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws OperationNotSupportedException {
         
-        Banco provincial = new Banco();
-        Persona esteban = new Persona("Esteban Borai", 10500, 100, "admin");
+        ArrayList<Persona> accounts = new ArrayList<>();
         
-        provincial.agregarCuenta(esteban);
-        System.out.println(esteban.getBalancePesos());
+        Persona p = new Persona("Qwerty1", 20029, 29, "12345");
+        Persona p1 = new Persona("Qwerty2", 20029, 29, "12345");
+        Persona p2 = new Persona("Qwerty3", 20029, 29, "12345");
+        Persona p3 = new Persona("Qwerty4", 20029, 29, "12345");
+        Persona p4 = new Persona("Qwerty5", 20029, 29, "12345");
+        Persona p5 = new Persona("Qwerty6", 20029, 29, "12345");
         
-        provincial.debit(esteban, 5500, 1);
-        System.out.println(esteban.getBalancePesos());
+        accounts.add(p);
+        accounts.add(p1);
+        accounts.add(p2);
+        accounts.add(p3);
+        accounts.add(p4);
         
-        System.out.println(esteban.toString());
-        
-        System.out.println(provincial.getCurrentPassword(esteban));
-        
-        provincial.setNewPassword(esteban, "12345");
-        System.out.println(provincial.getCurrentPassword(esteban));
-        provincial.setNewPassword(esteban, "233");
-        provincial.setNewPassword(esteban, "A23442");
-        System.out.println(provincial.getCurrentPassword(esteban));
-        
+        Banco bank = new Banco(accounts);
     }
     
 }
