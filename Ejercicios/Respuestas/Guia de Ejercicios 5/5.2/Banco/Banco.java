@@ -1,19 +1,33 @@
 package com.codoacodo;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.naming.OperationNotSupportedException;
 
 public class Banco {
     
     ArrayList<Persona> accounts = new ArrayList<>();
+    Database db = new Database();
     
-    public Banco () {
+    public Banco (ArrayList<Persona> personas) throws OperationNotSupportedException {
+        
+        if (personas.size() > 0){
+            
+            for (int i = 0; i < personas.size(); i++){
+                agregarCuenta(personas.get(i));
+            }
+            db.displayTable();
+            
+        } else {
+            System.out.println("Se crearan Personas No Implementadas Por El Usuario");
+            createRandomPersonas(5); //Implementar
+        }
         
     }
     
     public void agregarCuenta (Persona p){
-        this.accounts.add(p);
+        db.insertPersonas(p);
     }
     
     public void credit (Persona p, double amount, int account){
@@ -121,5 +135,13 @@ public class Banco {
         } else {
             System.out.println("Password isnt valid!");
         }
+    }
+
+    private void createRandomPersonas(int i) {
+        /*
+        Crea Objetos Persona Random el numero deseado de veces en i,
+        y procede a cargar en instanceVar(accounts).
+        */
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
